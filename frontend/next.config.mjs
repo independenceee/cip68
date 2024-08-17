@@ -10,6 +10,7 @@ const nextConfig = {
             asyncWebAssembly: true,
             layers: true,
         };
+
         return config;
     },
 };
