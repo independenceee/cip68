@@ -1,0 +1,68 @@
+name: CI/CD Pipeline
+
+on:
+    push:
+        branches:
+            - master
+    pull_request:
+        branches:
+            - master
+
+jobs:
+    nest-build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [16.x]
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js for NestJS
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Backend
+              working-directory: ./backend
+
+            - name: Install dependencies for NestJS
+              run: npm install
+
+            - name: Run Linter for NestJS
+              run: npm run lint
+
+            - name: Run Tests for NestJS
+              run: npm run test
+
+            - name: Build Application for NestJS
+              run: npm run build
+
+    next-build:
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                node-version: [16.x]
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js for Next.js
+              uses: actions/setup-node@v2
+              with:
+                  node-version: ${{ matrix.node-version }}
+
+            - name: Frontend
+              working-directory: ./frontend
+
+            - name: Install dependencies for Next.js
+              run: npm install
+
+            - name: Run Linter for Next.js
+              run: npm run lint
+
+            - name: Run Tests for Next.js
+              run: npm run test
+
+            - name: Build Application for Next.js
+              run: npm run build
