@@ -1,0 +1,21 @@
+name = "independence/contract"
+version = "0.0.0"
+compiler = "v1.0.29-alpha"
+plutus = "v2"
+license = "Apache-2.0"
+description = "Aiken contracts for project 'independence/contract'"
+
+[repository]
+user = "independence"
+project = "contract"
+platform = "github"
+
+[[dependencies]]
+name = "aiken-lang/stdlib"
+version = "1.9.0"
+source = "github"
+
+[[dependencies]]
+name = "logicalmechanism/assist"
+version = "v0.4.10"
+source = "github"
