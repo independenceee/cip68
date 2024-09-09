@@ -4,9 +4,9 @@ Write validators in the `validators` folder, and supporting functions in the `li
 
 For example, as `validators/always_true.ak`
 
-```gleam
-validator {
-  fn spend(_datum: Data, _redeemer: Data, _context: Data) -> Bool {
+```aiken
+validator my_first_validator {
+  spend(_datum: Option<Data>, _redeemer: Data, _output_reference: Data, _context: Data) {
     True
   }
 }
@@ -22,7 +22,7 @@ aiken build
 
 You can write tests in any module using the `test` keyword. For example:
 
-```gleam
+```aiken
 test foo() {
   1 + 1 == 2
 }

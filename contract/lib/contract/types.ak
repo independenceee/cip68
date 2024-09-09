@@ -1,17 +1,11 @@
-use aiken/dict.{Dict}
-
-pub type MintAction {
+// redeemer for mint validator
+pub type MintRedeemer {
   Mint
   Burn
 }
 
-pub type StoreAction {
+// redeemer for store validator
+pub type StoreRedeemer {
   Update
   Remove
-}
-
-pub type MetaDatum {
-  metadata: Dict<ByteArray, Data>,
-  version: Int,
-  extra: ByteArray,
 }
