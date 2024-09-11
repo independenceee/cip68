@@ -1,24 +1,29 @@
 {
-  "name": "contract",
-  "version": "1.0.0",
-  "description": "Open source dynamic assets (Token/NFT) generator (CIP68)",
-  "main": "src",
-  "type": "module",
-  "directories": {
-    "lib": "lib"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "@meshsdk/core": "^1.6.9",
-    "cbor-x": "^1.6.0",
-    "lucid-cardano": "^0.10.7"
-  },
-  "devDependencies": {
-    "ts-node": "^10.9.2",
-    "typescript": "^5.5.4"
-  }
+    "name": "contract",
+    "version": "1.0.0",
+    "description": "Write validators in the `validators` folder, and supporting functions in the `lib` folder using `.ak` as a file extension.",
+    "main": "index.js",
+    "type": "module",
+    "directories": {
+        "lib": "lib"
+    },
+    "scripts": {
+        "mint:lucid": "ts-node src/services/lucid/mint.ts",
+        "mint:mesh": "ts-node src/services/mesh/mint.ts",
+        "burn:mesh": "ts-node src/services/mesh/burn.ts",
+        "test:mint": "ts-node src/test/mint.ts",
+        "test:send": "ts-node src/test/send.ts"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "@meshsdk/core": "^1.7.4",
+        "@meshsdk/core-csl": "^1.7.4",
+        "cbor": "^9.0.2",
+        "cbor-x": "^1.6.0",
+        "lucid-cardano": "^0.10.10",
+        "ts-node": "^10.9.2",
+        "typescript": "^5.6.2"
+    }
 }

@@ -1,0 +1,18 @@
+version: "3.9"
+
+services:
+    decentralized-metaverse-mall-database:
+        container_name: decentralized-metaverse-mall-database
+        image: postgres:12
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: decentralized-metaverse-mall
+        ports:
+            - 5432:5432
+        volumes:
+            - pgdata:/var/lib/postgresql/data
+
+
+volumes:
+    pgdata: {}

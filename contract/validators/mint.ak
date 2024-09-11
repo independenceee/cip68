@@ -1,85 +1,83 @@
-use aiken/bytearray
-use aiken/cbor
-use aiken/hash.{Blake2b_224, Hash}
-use aiken/list
-use aiken/transaction.{Mint, ScriptContext, Transaction}
-use aiken/transaction/credential.{Script, VerificationKey}
-use aiken/transaction/value
-use assist/find
-use assist/minting
-use assist/payout
-use assist/prefixes
-use assist/signing
-use assist/values
-use contract/types.{MintAction}
-use contract/utils
+// use aiken/crypto.{ScriptHash}
+// use aiken/primitive/bytearray
+// use cardano/address
+use cardano/assets.{PolicyId, flatten}
+use cardano/minting.{exact}
+use cardano/transaction.{Transaction}
+// use cardano/value
+use contract/types.{Burn, Mint, MintRedeemer}
+// use contract/utils.{check_output_utxo}
+use types/cip68.{prefix_100, prefix_222}
+// use validation/find.{output_by_addr_value}
+// use validation/find
+// use validation/payout.{at_least}
 
-validator(
-  owner: Hash<Blake2b_224, VerificationKey>,
-  update: Hash<Blake2b_224, Script>,
-) {
-  fn mint(redeemer: MintAction, ctx: ScriptContext) -> Bool {
-    let ScriptContext { transaction, purpose } = ctx
+validator mint {
+  mint(redeemer: MintRedeemer, policy_id: PolicyId, transaction: Transaction) {
+    let Transaction { inputs, mint, outputs, .. } =
+      transaction
 
-    when purpose is {
-      Mint(policy_id) -> {
-        let Transaction { inputs, mint, outputs, .. } = transaction
-        let mint_flat =
-          mint
-            |> value.from_minted_value()
-            |> value.flatten()
+    let mint_flatten = flatten(mint)
+    when redeemer is {
+      Mint -> True
+      // {
+      //   let first_input_txid = find.first_input_txid(inputs)
+      //   let first_input_index = find.first_input_index(inputs)
+      //   let reference_token_name =
+      //     value.unique_token_name(
+      //       first_input_txid,
+      //       first_input_index,
+      //       prefix_100,
+      //     )
+      //   // let reference_value =
+      //   //   assets.from_asset(policy_id, reference_token_name, 1)
+      //   let user_token_name =
+      //     value.unique_token_name(
+      //       first_input_txid,
+      //       first_input_index,
+      //       prefix_222,
+      //     )
+      //   // let store_address = address.from_script(store)
+      //   // let output_utxo =
+      //     // output_by_addr_value(outputs, store_address, reference_value)
 
-        when redeemer is {
-          types.Mint -> {
-            let first_txid = find.first_input_txid(inputs)
-            let first_idx = find.first_input_index(inputs)
+      //   and {
+      //     first_input_index < 256,
+      //     exact(mint_flatten, policy_id, reference_token_name, 1)?,
+      //     exact(mint_flatten, policy_id, user_token_name, 1)?,
+      //     // at_least(store_address, reference_value, outputs)?,
+      //     // check_output_utxo(output_utxo)?,
+      //   }
+      // }
+      Burn ->  minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)
+      //     minting.by_prefix(mint_flatten, policy_id, prefix_100, -1)?,
+      //     minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)?,
+      //     when mint_flatten is {
+      //       [(_pid1, tkn1, _amt1), (_pid2, tkn2, _amt2)] ->
+      //         bytearray.compare(
+      //           bytearray.drop(tkn1, 4),
+      //           bytearray.drop(tkn2, 4),
+      //         ) == Equal
+      //       _ -> False
+      //     },
+      //   }
 
-            let ref_tkn =
-              values.unique_token_name(
-                first_txid,
-                first_idx,
-                prefixes.prefix_100,
-              )
-            let ref_value = value.from_asset(policy_id, ref_tkn, 1)
-            let user_tkn =
-              values.unique_token_name(
-                first_txid,
-                first_idx,
-                prefixes.prefix_222,
-              )
-
-            let update_address = credential.from_script(update)
-            trace cbor.diagnostic(ref_value)
-            let output_utxo =
-              utils.output_by_addr_value(outputs, update_address, ref_value)
-
-            and {
-              signing.verify_sig(transaction.extra_signatories, owner)?,
-              (list.length(mint_flat) == 2)?,
-              first_idx < 256,
-              minting.exact(mint_flat, policy_id, ref_tkn, 1)?,
-              minting.exact(mint_flat, policy_id, user_tkn, 1)?,
-              payout.at_least(update_address, ref_value, outputs)?,
-              utils.check_output_utxo(output_utxo)?,
-            }
-          }
-          types.Burn -> and {
-              signing.verify_sig(transaction.extra_signatories, owner)?,
-              minting.by_prefix(mint_flat, policy_id, prefixes.prefix_100, -1)?,
-              minting.by_prefix(mint_flat, policy_id, prefixes.prefix_222, -1)?,
-              when mint_flat is {
-                [(_pid1, tkn1, _amt1), (_pid2, tkn2, _amt2)] ->
-                  bytearray.compare(
-                    bytearray.drop(tkn1, 4),
-                    bytearray.drop(tkn2, 4),
-                  ) == Equal
-                _ -> False
-              },
-            }
-        }
-      }
-
-      _ -> False
+      // Burn -> and {
+      //     minting.by_prefix(mint_flatten, policy_id, prefix_100, -1)?,
+      //     minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)?,
+      //     when mint_flatten is {
+      //       [(_pid1, tkn1, _amt1), (_pid2, tkn2, _amt2)] ->
+      //         bytearray.compare(
+      //           bytearray.drop(tkn1, 4),
+      //           bytearray.drop(tkn2, 4),
+      //         ) == Equal
+      //       _ -> False
+      //     },
+      //   }
     }
+  }
+
+  else(_) {
+    fail
   }
 }
