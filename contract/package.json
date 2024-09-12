@@ -11,6 +11,7 @@
         "mint": "ts-node src/services/mint.ts",
         "burn": "ts-node src/services/burn.ts",
         "update": "ts-node src/services/update.ts",
+        "remove": "ts-node src/services/remove.ts",
         "mint:lucid": "ts-node src/services/lucid/mint.ts",
         "mint:mesh": "ts-node src/services/mesh/mint.ts",
         "burn:mesh": "ts-node src/services/mesh/burn.ts",
