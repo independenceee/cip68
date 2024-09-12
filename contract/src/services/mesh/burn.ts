@@ -41,6 +41,7 @@ const burn = async function () {
         "V3",
     );
     const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false);
+
     const utxos = await wallet.getUtxos();
     const collateral = (await wallet.getCollateral())[0]!;
     const changeAddress = wallet.getChangeAddress();
@@ -50,6 +51,7 @@ const burn = async function () {
         evaluator: provider,
         submitter: provider,
     });
+
     const mintScript = applyParamsToScript(plutusV3.validators[0].compiledCode, []);
     const tokenName = "NFT-CIP68";
     const tokenNameHex = stringToHex(tokenName);
@@ -67,7 +69,7 @@ const burn = async function () {
         // .mintingScript(mintScript)
         // .mintRedeemerValue(mConStr1([]))
         .mintPlutusScriptV3()
-        .mint("-1", policyId, CIP68_222(tokenNameHex))
+        .mint("-1", policyId, CIP68_222("GTVT"))
         .mintingScript(mintScript)
 
         .mintRedeemerValue(mConStr1([]))

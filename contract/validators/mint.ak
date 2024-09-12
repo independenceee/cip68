@@ -50,18 +50,7 @@ validator mint {
       //   }
       // }
       Burn ->  minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)
-      //     minting.by_prefix(mint_flatten, policy_id, prefix_100, -1)?,
-      //     minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)?,
-      //     when mint_flatten is {
-      //       [(_pid1, tkn1, _amt1), (_pid2, tkn2, _amt2)] ->
-      //         bytearray.compare(
-      //           bytearray.drop(tkn1, 4),
-      //           bytearray.drop(tkn2, 4),
-      //         ) == Equal
-      //       _ -> False
-      //     },
-      //   }
-
+    
       // Burn -> and {
       //     minting.by_prefix(mint_flatten, policy_id, prefix_100, -1)?,
       //     minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)?,
