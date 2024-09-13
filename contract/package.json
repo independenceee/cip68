@@ -17,7 +17,10 @@
         "burn:mesh": "ts-node src/services/mesh/burn.ts",
         "update:mesh": "ts-node src/services/mesh/update.ts",
         "test:mint": "ts-node src/test/mint.ts",
-        "test:send": "ts-node src/test/send.ts"
+        "test:send": "ts-node src/test/send.ts",
+        "mint:release": "ts-node src/release/mint.ts",
+        "burn:release": "ts-node src/release/burn.ts",
+        "update:release": "ts-node src/release/update.ts"
     },
     "keywords": [],
     "author": "",

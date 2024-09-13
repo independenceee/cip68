@@ -39,56 +39,52 @@ const update = async function () {
     const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false);
     console.log(storeAddress);
     const storeUtxos = await provider.fetchAddressUTxOs(storeAddress);
-    console.log(storeUtxos[storeUtxos.length - 1]);
 
-    // process.exit(0);
-
-    const updatedDatum: Data = {
-        alternative: 0,
-        fields: ["NGUYEN KHANH", "17112003"],
-    };
     const referenceTokenRecipient: Recipient = {
         address: storeAddress,
         datum: {
             value: metadataToCip68({
-                name: "NGUYEN DUY KHANH",
+                name: "CARDANO2VN",
                 image: "ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua",
                 mediaType: "image/jpg",
-                description: "Blockchain Developer",
             }),
             inline: true,
         },
     };
 
+    async function fetchUtxo(addr, txHash) {
+        const utxos = await provider.fetchAddressUTxOs(addr);
+        return utxos.find((utxo) => {
+            return utxo.input.txHash == txHash;
+        });
+    }
+
+    const storeUtxo = await fetchUtxo(
+        storeAddress,
+        "274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6",
+    );
+
+    console.log(storeUtxo);
+
     const redeemer = {
         data: { alternative: 0, fields: [] },
     };
 
-    // const redeemer: Pick<Action, "data"> = {
-    //     data: {
-    //         alternative: 0,
-    //         fields: ["NGUYEN KHANH", "17112003"],
-    //     },
-    // };
-
     const tx = new Transaction({ initiator: wallet });
     tx.redeemValue({
-        value: storeUtxos[storeUtxos.length - 1],
+        value: storeUtxo!,
         script: storeScript,
-        // datum: storeUtxos[storeUtxos.length - 1],
         redeemer: redeemer,
     });
     tx.sendAssets(userAddress, [
-        // { unit: "lovelace", quantity: "2000000" },
         {
-            unit: "c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000de1404e475559454e20445559204b48414e48202d203137313132303033",
+            unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de14043415244414e4f32564e",
             quantity: "1",
         },
     ]);
     tx.sendAssets(referenceTokenRecipient, [
-        // { unit: "lovelace", quantity: "2000000" },
         {
-            unit: "c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000643b04e475559454e20445559204b48414e48202d203137313132303033",
+            unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b043415244414e4f32564e",
             quantity: "1",
         },
     ]);
@@ -106,3 +102,6 @@ update()
     .finally(() => {
         process.exit(0);
     });
+//81d1f83172bd35f68c1d6ba037c8ad2bb9acccd739d8df98c4e2b94648e4c66f
+//274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6
+//c79ec8056267a82dca3906c46a3aa222579a9e111ded54bc7d0f3e8a5db21edb

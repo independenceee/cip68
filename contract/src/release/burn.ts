@@ -10,6 +10,7 @@ import {
     CIP68_100,
     CIP68_222,
     Asset,
+    ForgeScript,
 } from "@meshsdk/core";
 import cbor from "cbor";
 import { plutusV3 } from "../libs/plutusV3";
@@ -39,26 +40,48 @@ const burn = async function () {
     };
 
     const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false);
-    console.log(storeAddress);
-    const storeUtxos = await provider.fetchAddressUTxOs(storeAddress);
-    console.log(storeUtxos[storeUtxos.length - 1]);
-    // process.exit(0);
 
+    const storeUtxos = await provider.fetchAddressUTxOs(storeAddress);
     const redeemer = {
         data: { alternative: 1, fields: [] },
     };
 
+    const txHashR = "274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6";
+    async function fetchUtxo(addr, txHash) {
+        const utxos = await provider.fetchAddressUTxOs(addr);
+        return utxos.find((utxo) => {
+            return utxo.input.txHash == txHash;
+        });
+    }
+    const userUtxo = await fetchUtxo(userAddress, txHashR);
+    const storeUtxo = await fetchUtxo(storeAddress, txHashR);
+
+    console.log(userUtxo?.output.amount);
+    console.log(storeUtxo?.output.amount);
+
     const contributeAsset: Asset = {
-        unit: "c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000643b04e475559454e20445559204b48414e48202d203137313132303033",
-        quantity: "1",
+        unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de14043415244414e4f32564e",
+        quantity: "2",
     };
 
     const referenceAsset: Asset = {
-        unit: "c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000de1404e475559454e20445559204b48414e48202d203137313132303033",
-        quantity: "1",
+        unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b043415244414e4f32564e",
+        quantity: "2",
     };
+
     const tx = new Transaction({ initiator: wallet });
-    tx.setTxInputs(storeUtxos);
+    tx.redeemValue({
+        value: storeUtxo!,
+        script: storeScript,
+        redeemer: redeemer,
+    });
+    tx.sendAssets(userAddress, [
+        {
+            unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b043415244414e4f32564e",
+            quantity: "1",
+        },
+    ]);
+    tx.setTxInputs([storeUtxo!, userUtxo!]);
     tx.burnAsset(mintScript, contributeAsset, redeemer);
     tx.burnAsset(mintScript, referenceAsset, redeemer);
 
