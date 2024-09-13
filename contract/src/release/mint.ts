@@ -3,23 +3,18 @@ import {
     MeshWallet,
     Mint,
     PlutusScript,
-    Transaction,
-    Recipient,
     serializePlutusScript,
-    metadataToCip68,
-    CIP68_100,
-    CIP68_222,
+    Transaction,
 } from "@meshsdk/core";
 import cbor from "cbor";
-import { plutusV3 } from "../../libs/plutusV3";
-
+import { plutusV3 } from "../libs/plutusV3";
 const mint = async function () {
-    const provider = new BlockfrostProvider("preprodHXZNMTECARQ3jlUE0RvCBT2qOK6JRtQf");
+    const blockfrostProvider = new BlockfrostProvider("preprodHXZNMTECARQ3jlUE0RvCBT2qOK6JRtQf");
 
     const wallet = new MeshWallet({
         networkId: 0,
-        fetcher: provider,
-        submitter: provider,
+        fetcher: blockfrostProvider,
+        submitter: blockfrostProvider,
         key: {
             type: "root",
             bech32: "xprv16zlhjxs29l9zk0aaf54ttn32nsrl9l855yqpsurnwjxfu2kd93dc4xx0pvxf0ffhzl9vc9vpcqsmmhhfu3c8nfusdj0yh8mg2kzgr797vxrtut4czgwjj4pdzfnstcwy6n0jfjw6tyeuqxdynl8msnu3cv8j5msy",
@@ -27,7 +22,6 @@ const mint = async function () {
     });
 
     const userAddress = wallet.getChangeAddress();
-    console.log(userAddress);
     const mintScript: PlutusScript = {
         code: cbor.encode(Buffer.from(plutusV3.validators[0].compiledCode, "hex")).toString("hex"),
         version: "V3",
@@ -36,18 +30,17 @@ const mint = async function () {
         code: cbor.encode(Buffer.from(plutusV3.validators[2].compiledCode, "hex")).toString("hex"),
         version: "V3",
     };
-    const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false);
-    console.log(storeAddress);
 
+    const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false);
     const redeemer = {
         data: { alternative: 0, fields: [] },
     };
 
     const referenceAsset: Mint = {
-        assetName: "ABCDE",
+        assetName: "CARDANO2VN",
         assetQuantity: "1",
         metadata: {
-            name: "ABCDE",
+            name: "CARDANO2VN",
             image: "ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua",
             mediaType: "image/jpg",
             description: "Blockchain Developer",
@@ -58,15 +51,15 @@ const mint = async function () {
 
     const tx = new Transaction({ initiator: wallet });
 
-    // tx.mintAsset(mintScript, contributeAssset, redeemer);
     tx.mintAsset(mintScript, referenceAsset, redeemer);
 
     const unsignedTx = await tx.build();
     const signedTx = wallet.signTx(unsignedTx, true);
     const txHash = await wallet.submitTx(signedTx);
-    provider.onTxConfirmed(txHash, () => {
+    blockfrostProvider.onTxConfirmed(txHash, () => {
         console.log(txHash);
     });
+
     console.log(txHash);
 };
 
@@ -78,3 +71,5 @@ mint()
     .finally(() => {
         process.exit(0);
     });
+
+//81d1f83172bd35f68c1d6ba037c8ad2bb9acccd739d8df98c4e2b94648e4c66f
