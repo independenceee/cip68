@@ -1,6 +1,5 @@
 use cardano/assets.{without_lovelace}
 use cardano/transaction.{OutputReference, Transaction, find_input}
-
 use contract/types.{Remove, StoreRedeemer, Update}
 use contract/utils.{check_output_utxo}
 use types/cip68.{CIP68}
@@ -14,7 +13,6 @@ validator store {
     transaction: Transaction,
   ) {
     let Transaction { inputs, outputs, .. } = transaction
-
     expect Some(input) = find_input(inputs, output_reference)
     let reference_nft = input.output.value |> without_lovelace()
 
@@ -26,7 +24,7 @@ validator store {
 
         check_output_utxo(validation_output)
       }
-      Remove -> {
+      Remove ->  {
         let validation_output = output_by_value(outputs, reference_nft)
 
         check_output_utxo(validation_output)

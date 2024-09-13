@@ -13,7 +13,7 @@ import {
     ForgeScript,
 } from "@meshsdk/core";
 import cbor from "cbor";
-import { plutusV3 } from "../../libs/plutusV3";
+import { plutusV3 } from "../libs/plutusV3";
 
 const burn = async function () {
     const provider = new BlockfrostProvider("preprodHXZNMTECARQ3jlUE0RvCBT2qOK6JRtQf");
@@ -46,7 +46,7 @@ const burn = async function () {
         data: { alternative: 1, fields: [] },
     };
 
-    const txHashR = "d543920e462c312e5a31767eef893e02c0d1aec03d658f90d4a0bc1017d51f35";
+    const txHashR = "274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6";
     async function fetchUtxo(addr, txHash) {
         const utxos = await provider.fetchAddressUTxOs(addr);
         return utxos.find((utxo) => {
@@ -60,42 +60,27 @@ const burn = async function () {
     console.log(storeUtxo?.output.amount);
 
     const contributeAsset: Asset = {
-        unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de1404142434445",
+        unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de14043415244414e4f32564e",
         quantity: "2",
     };
 
     const referenceAsset: Asset = {
-        unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b04142434445",
+        unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b043415244414e4f32564e",
         quantity: "2",
     };
 
-    // const referenceAsset: Mint = {
-    //     assetName: "ABCDE",
-    //     assetQuantity: "-1",
-    //     // metadata: {
-    //     //     name: "ABCDE",
-    //     //     image: "ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua",
-    //     //     mediaType: "image/jpg",
-    //     //     description: "Blockchain Developer",
-    //     // },
-    //     metadata: [],
-    //     recipient: userAddress,
-    //     cip68ScriptAddress: storeAddress,
-    // };
     const tx = new Transaction({ initiator: wallet });
-    // tx.redeemValue({
-    //     value: storeUtxo!,
-    //     script: storeScript,
-    //     // datum: storeUtxos[storeUtxos.length - 1],
-    //     redeemer: redeemer,
-    // });
-    // tx.sendAssets(userAddress, [
-    //     // { unit: "lovelace", quantity: "2000000" },
-    //     {
-    //         unit: "c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000de1404e475559454e20445559204b48414e48202d203137313132303033",
-    //         quantity: "1",
-    //     },
-    // ]);
+    tx.redeemValue({
+        value: storeUtxo!,
+        script: storeScript,
+        redeemer: redeemer,
+    });
+    tx.sendAssets(userAddress, [
+        {
+            unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b043415244414e4f32564e",
+            quantity: "1",
+        },
+    ]);
     tx.setTxInputs([storeUtxo!, userUtxo!]);
     tx.burnAsset(mintScript, contributeAsset, redeemer);
     tx.burnAsset(mintScript, referenceAsset, redeemer);

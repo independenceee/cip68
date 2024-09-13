@@ -7,13 +7,13 @@ import {
     Recipient,
     serializePlutusScript,
     metadataToCip68,
-    CIP68_100,
-    CIP68_222,
+    Data,
+    Action,
 } from "@meshsdk/core";
 import cbor from "cbor";
-import { plutusV3 } from "../../libs/plutusV3";
+import { plutusV3 } from "../libs/plutusV3";
 
-const mint = async function () {
+const update = async function () {
     const provider = new BlockfrostProvider("preprodHXZNMTECARQ3jlUE0RvCBT2qOK6JRtQf");
 
     const wallet = new MeshWallet({
@@ -38,39 +38,63 @@ const mint = async function () {
     };
     const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false);
     console.log(storeAddress);
+    const storeUtxos = await provider.fetchAddressUTxOs(storeAddress);
+
+    const referenceTokenRecipient: Recipient = {
+        address: storeAddress,
+        datum: {
+            value: metadataToCip68({
+                name: "CARDANO2VN",
+                image: "ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua",
+                mediaType: "image/jpg",
+            }),
+            inline: true,
+        },
+    };
+
+    async function fetchUtxo(addr, txHash) {
+        const utxos = await provider.fetchAddressUTxOs(addr);
+        return utxos.find((utxo) => {
+            return utxo.input.txHash == txHash;
+        });
+    }
+
+    const storeUtxo = await fetchUtxo(
+        storeAddress,
+        "274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6",
+    );
+
+    console.log(storeUtxo);
 
     const redeemer = {
         data: { alternative: 0, fields: [] },
     };
 
-    const referenceAsset: Mint = {
-        assetName: "ABCDE",
-        assetQuantity: "1",
-        metadata: {
-            name: "ABCDE",
-            image: "ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua",
-            mediaType: "image/jpg",
-            description: "Blockchain Developer",
-        },
-        recipient: userAddress,
-        cip68ScriptAddress: storeAddress,
-    };
-
     const tx = new Transaction({ initiator: wallet });
-
-    // tx.mintAsset(mintScript, contributeAssset, redeemer);
-    tx.mintAsset(mintScript, referenceAsset, redeemer);
-
+    tx.redeemValue({
+        value: storeUtxo!,
+        script: storeScript,
+        redeemer: redeemer,
+    });
+    tx.sendAssets(userAddress, [
+        {
+            unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de14043415244414e4f32564e",
+            quantity: "1",
+        },
+    ]);
+    tx.sendAssets(referenceTokenRecipient, [
+        {
+            unit: "65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b043415244414e4f32564e",
+            quantity: "1",
+        },
+    ]);
     const unsignedTx = await tx.build();
     const signedTx = wallet.signTx(unsignedTx, true);
     const txHash = await wallet.submitTx(signedTx);
-    provider.onTxConfirmed(txHash, () => {
-        console.log(txHash);
-    });
     console.log(txHash);
 };
 
-mint()
+update()
     .then(() => {
         process.exit(1);
     })
@@ -78,3 +102,6 @@ mint()
     .finally(() => {
         process.exit(0);
     });
+//81d1f83172bd35f68c1d6ba037c8ad2bb9acccd739d8df98c4e2b94648e4c66f
+//274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6
+//c79ec8056267a82dca3906c46a3aa222579a9e111ded54bc7d0f3e8a5db21edb
