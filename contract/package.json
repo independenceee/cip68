@@ -20,7 +20,8 @@
         "test:send": "ts-node src/test/send.ts",
         "mint:release": "ts-node src/release/mint.ts",
         "burn:release": "ts-node src/release/burn.ts",
-        "update:release": "ts-node src/release/update.ts"
+        "update:release": "ts-node src/release/update.ts",
+        "remove:release": "ts-node src/release/remove.ts"
     },
     "keywords": [],
     "author": "",

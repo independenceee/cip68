@@ -4,65 +4,91 @@ on:
     push:
         branches:
             - master
+            - main
     pull_request:
         branches:
             - master
+            - main
 
 jobs:
     nest-build:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [16.x]
+                node-version: [18.x]
         steps:
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Set up Node.js for NestJS
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
-
-            - name: Backend
-              working-directory: ./backend
+                  cache: "npm"
 
             - name: Install dependencies for NestJS
               run: npm install
+              working-directory: ./backend
 
             - name: Run Linter for NestJS
               run: npm run lint
+              working-directory: ./backend
 
             - name: Run Tests for NestJS
               run: npm run test
+              working-directory: ./backend
 
             - name: Build Application for NestJS
               run: npm run build
+              working-directory: ./backend
 
     next-build:
         runs-on: ubuntu-latest
         strategy:
             matrix:
-                node-version: [16.x]
+                node-version: [18.x]
         steps:
             - name: Checkout code
-              uses: actions/checkout@v2
+              uses: actions/checkout@v3
 
             - name: Set up Node.js for Next.js
-              uses: actions/setup-node@v2
+              uses: actions/setup-node@v3
               with:
                   node-version: ${{ matrix.node-version }}
-
-            - name: Frontend
-              working-directory: ./frontend
+                  cache: "npm"
 
             - name: Install dependencies for Next.js
               run: npm install
+              working-directory: ./frontend
 
             - name: Run Linter for Next.js
               run: npm run lint
+              working-directory: ./frontend
 
             - name: Run Tests for Next.js
               run: npm run test
+              working-directory: ./frontend
 
             - name: Build Application for Next.js
               run: npm run build
+              working-directory: ./frontend
+
+    aiken-build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v3
+
+            - name: Set up Aiken
+              uses: aiken-lang/setup-aiken@v1
+              with:
+                  version: v1.1.0
+
+            - name: Format Check with Aiken
+              run: aiken fmt --check
+
+            - name: Static Analysis with Aiken
+              run: aiken check -D
+
+            - name: Build with Aiken
+              run: aiken build

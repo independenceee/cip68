@@ -26,7 +26,6 @@ validator store {
       }
       Remove ->  {
         let validation_output = output_by_value(outputs, reference_nft)
-
         check_output_utxo(validation_output)
       }
     }

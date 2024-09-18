@@ -45,7 +45,6 @@ const update = async function () {
         datum: {
             value: metadataToCip68({
                 name: "KH17112003",
-                description: "Nguyễn Duy Khánh",
             }),
             inline: true,
         },
@@ -60,13 +59,13 @@ const update = async function () {
 
     const storeUtxo = await fetchUtxo(
         storeAddress,
-        "08b7507857059e503aeb74249c8474bc43f891ff0701373b1dfcb5b30b264b8c",
+        "d20d387fc4e3cbcedb6717effad4b9855713b18c79537ed4931bcf85dde704ad",
     );
 
     console.log(storeUtxo);
 
     const redeemer = {
-        data: { alternative: 0, fields: [] },
+        data: { alternative: 1, fields: [] },
     };
 
     const tx = new Transaction({ initiator: wallet });

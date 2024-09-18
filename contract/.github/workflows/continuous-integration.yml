@@ -1,18 +1,18 @@
 name: Continuous Integration
 
 on:
-  push:
-    branches: ["main"]
-  pull_request:
+    push:
+        branches: ["main"]
+    pull_request:
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: aiken-lang/setup-aiken@v1
-        with:
-          version: v1.1.0
-      - run: aiken fmt --check
-      - run: aiken check -D
-      - run: aiken build
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+            - uses: aiken-lang/setup-aiken@v1
+              with:
+                  version: v1.1.0
+            - run: aiken fmt --check
+            - run: aiken check -D
+            - run: aiken build

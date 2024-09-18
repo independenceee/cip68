@@ -37,13 +37,13 @@ const mint = async function () {
     };
 
     const referenceAsset: Mint = {
-        assetName: "CARDANO2VN",
+        assetName: "KH17112003",
         assetQuantity: "1",
         metadata: {
-            name: "CARDANO2VN",
+            name: "KH17112003",
             image: "ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua",
             mediaType: "image/jpg",
-            description: "Blockchain Developer",
+            description: "KH17112003",
         },
         recipient: userAddress,
         cip68ScriptAddress: storeAddress,
