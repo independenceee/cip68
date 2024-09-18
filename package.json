@@ -1,0 +1,28 @@
+{
+  "name": "@independenceee/cip68",
+  "version": "1.0.0",
+  "description": "Open source dynamic assets (Token/NFT) generator (CIP68)",
+  "main": "index.js",
+  "private": false,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/independenceee/cip68.git"
+  },
+  "keywords": [
+    "cardano",
+    "cip68",
+    "nft",
+    "token",
+    "assets",
+    "dynamic"
+  ],
+  "author": "independenceee",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/independenceee/cip68/issues"
+  },
+  "homepage": "https://github.com/independenceee/cip68#readme"
+}

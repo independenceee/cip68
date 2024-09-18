@@ -1,55 +1,20 @@
-# contract
+# Contract - CIP68
 
-Write validators in the `validators` folder, and supporting functions in the `lib` folder using `.ak` as a file extension.
+### Features
 
-For example, as `validators/always_true.ak`
+-   Mint assets by type CIP68
+-   Burn assets by type CIP68
+-   Update assets by type CIP68
+-   Remove assets by type CIP68
+-   Sell assets by type CIP68
+-   Buy assets by type CIP68
+-   Refund assets by type CIP68
 
-```aiken
-validator my_first_validator {
-  spend(_datum: Option<Data>, _redeemer: Data, _output_reference: Data, _context: Data) {
-    True
-  }
-}
-```
+### Install
 
-## Building
+-   NPM: `npm install @independenceee/cip68`
+-   YARN: `yarn add @independenceee/cip68`
 
-```sh
-aiken build
-```
+### Contact
 
-## Testing
-
-You can write tests in any module using the `test` keyword. For example:
-
-```aiken
-test foo() {
-  1 + 1 == 2
-}
-```
-
-To run all tests, simply do:
-
-```sh
-aiken check
-```
-
-To run only tests matching the string `foo`, do:
-
-```sh
-aiken check -m foo
-```
-
-## Documentation
-
-If you're writing a library, you might want to generate an HTML documentation for it.
-
-Use:
-
-```sh
-aiken docs
-```
-
-## Resources
-
-Find more on the [Aiken's user manual](https://aiken-lang.org).
+For any questions or feedbach, please contract the project maintainer at [nguyenkhanh17112003@gmail.com](mailto:nguyenkhanh17112003@gmail.com).
