@@ -13,7 +13,7 @@ import {
 import cbor from 'cbor'
 import { plutusV3 } from '../libs/plutus-v3'
 
-const update = async function () {
+const remove = async function () {
     const provider = new BlockfrostProvider('preprodHXZNMTECARQ3jlUE0RvCBT2qOK6JRtQf')
 
     const wallet = new MeshWallet({
@@ -39,28 +39,21 @@ const update = async function () {
     const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false)
     console.log(storeAddress)
     const storeUtxos = await provider.fetchAddressUTxOs(storeAddress)
+    console.log(storeUtxos[storeUtxos.length - 1])
+
+    // process.exit(0);
 
     const referenceTokenRecipient: Recipient = {
         address: storeAddress,
         datum: {
             value: metadataToCip68({
-                name: 'KH17112003',
-                description: 'Nguyễn Duy Khánh'
+                name: 'NGUYEN DUY KHANH',
+                image: 'ipfs://QmRzicpReutwCkM6aotuKjErFCUD213DpwPq6ByuzMJaua',
+                mediaType: 'image/jpg'
             }),
             inline: true
         }
     }
-
-    async function fetchUtxo(addr, txHash) {
-        const utxos = await provider.fetchAddressUTxOs(addr)
-        return utxos.find((utxo) => {
-            return utxo.input.txHash == txHash
-        })
-    }
-
-    const storeUtxo = await fetchUtxo(storeAddress, '08b7507857059e503aeb74249c8474bc43f891ff0701373b1dfcb5b30b264b8c')
-
-    console.log(storeUtxo)
 
     const redeemer = {
         data: { alternative: 0, fields: [] }
@@ -68,19 +61,22 @@ const update = async function () {
 
     const tx = new Transaction({ initiator: wallet })
     tx.redeemValue({
-        value: storeUtxo!,
+        value: storeUtxos[storeUtxos.length - 1],
         script: storeScript,
+        // datum: storeUtxos[storeUtxos.length - 1],
         redeemer: redeemer
     })
     tx.sendAssets(userAddress, [
+        // { unit: "lovelace", quantity: "2000000" },
         {
-            unit: 'd7b825c03d0243cd088670010a0033384529b1f0ebc13f9d50259f6d000de1404b483137313132303033',
+            unit: 'c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000de1404e475559454e20445559204b48414e48202d203137313132303033',
             quantity: '1'
         }
     ])
     tx.sendAssets(referenceTokenRecipient, [
+        // { unit: "lovelace", quantity: "2000000" },
         {
-            unit: 'd7b825c03d0243cd088670010a0033384529b1f0ebc13f9d50259f6d000643b04b483137313132303033',
+            unit: 'c17544c28dd4d85dd994b68478c0e290c65c5bf9e79213f25dd13d65000643b04e475559454e20445559204b48414e48202d203137313132303033',
             quantity: '1'
         }
     ])
@@ -90,7 +86,7 @@ const update = async function () {
     console.log(txHash)
 }
 
-update()
+remove()
     .then(() => {
         process.exit(1)
     })
@@ -98,6 +94,3 @@ update()
     .finally(() => {
         process.exit(0)
     })
-//81d1f83172bd35f68c1d6ba037c8ad2bb9acccd739d8df98c4e2b94648e4c66f
-//274853ed1578339217960c9a1893ab9df236b6a5a0a1733350fcd555c19e66b6
-//c79ec8056267a82dca3906c46a3aa222579a9e111ded54bc7d0f3e8a5db21edb

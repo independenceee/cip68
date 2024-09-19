@@ -1,7 +1,29 @@
-import { Constr, Data } from "lucid-cardano";
-
 const redeemers = {
-    mint: Data.to(new Constr(0, []))
-}
+    mint: {
+        data: {
+            alternative: 0,
+            fields: []
+        },
+        tag: 'MINT'
+    },
+    burn: {
+        data: {
+            alternative: 1,
+            fields: []
+        }
+    },
+    update: {
+        data: {
+            alternative: 0,
+            feilds: []
+        }
+    },
+    remove: {
+        data: {
+            alternative: 1,
+            feilds: []
+        }
+    }
+} as const
 
-export default redeemers;
+export default redeemers
