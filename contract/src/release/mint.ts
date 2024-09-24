@@ -28,6 +28,7 @@ const mint = async function () {
     const redeemer = {
         data: { alternative: 0, fields: [] }
     }
+    console.log(storeAddress)
 
     const referenceAsset: Mint = {
         assetName: 'KH17112003',

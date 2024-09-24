@@ -8,10 +8,10 @@
         "lib": "lib"
     },
     "scripts": {
-        "mint": "node --loader ts-node/esm src/services/mint.ts",
-        "burn": "node --loader ts-node/esm src/services/burn.ts",
-        "update": "node --loader ts-node/esm src/services/update.ts",
-        "remove": "node --loader ts-node/esm src/services/remove.ts",
+        "mint:txbuilder": "node --loader ts-node/esm src/txbuilder/mint.ts",
+        "burn:txbuilder": "node --loader ts-node/esm src/txbuilder/burn.ts",
+        "update:txbuilder": "node --loader ts-node/esm src/txbuilder/update.ts",
+        "remove:txbuilder": "node --loader ts-node/esm src/txbuilder/remove.ts",
         "mint:lucid": "node --loader ts-node/esm src/services/lucid/mint.ts",
         "mint:mesh": "node --loader ts-node/esm src/services/mesh/mint.ts",
         "burn:mesh": "node --loader ts-node/esm src/services/mesh/burn.ts",

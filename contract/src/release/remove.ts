@@ -40,16 +40,6 @@ const update = async function () {
     console.log(storeAddress)
     const storeUtxos = await provider.fetchAddressUTxOs(storeAddress)
 
-    const referenceTokenRecipient: Recipient = {
-        address: storeAddress,
-        datum: {
-            value: metadataToCip68({
-                name: 'KH17112003'
-            }),
-            inline: true
-        }
-    }
-
     async function fetchUtxo(addr, txHash) {
         const utxos = await provider.fetchAddressUTxOs(addr)
         return utxos.find((utxo) => {
@@ -57,12 +47,23 @@ const update = async function () {
         })
     }
 
-    const storeUtxo = await fetchUtxo(storeAddress, 'd20d387fc4e3cbcedb6717effad4b9855713b18c79537ed4931bcf85dde704ad')
+    const storeUtxo = await fetchUtxo(storeAddress, '63c04dbcd662b3eb1b631fe3ff04375c6ebed4fc8aae5420b6f046790fa14f20')
 
     console.log(storeUtxo)
 
     const redeemer = {
         data: { alternative: 1, fields: [] }
+    }
+
+    const referenceTokenRecipient: Recipient = {
+        address: userAddress,
+        datum: {
+            value: metadataToCip68({
+                name: 'KH17112003',
+                description: 'Nguyễn Duy Khánh'
+            }),
+            inline: true
+        }
     }
 
     const tx = new Transaction({ initiator: wallet })
@@ -71,18 +72,9 @@ const update = async function () {
         script: storeScript,
         redeemer: redeemer
     })
-    tx.sendAssets(userAddress, [
-        {
-            unit: 'd7b825c03d0243cd088670010a0033384529b1f0ebc13f9d50259f6d000de1404b483137313132303033',
-            quantity: '1'
-        }
-    ])
-    tx.sendAssets(referenceTokenRecipient, [
-        {
-            unit: 'd7b825c03d0243cd088670010a0033384529b1f0ebc13f9d50259f6d000643b04b483137313132303033',
-            quantity: '1'
-        }
-    ])
+    // tx.sendValue(userAddress, storeUtxo!)
+    tx.sendValue(referenceTokenRecipient, storeUtxo!)
+
     const unsignedTx = await tx.build()
     const signedTx = wallet.signTx(unsignedTx, true)
     const txHash = await wallet.submitTx(signedTx)

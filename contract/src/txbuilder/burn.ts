@@ -27,6 +27,7 @@ const burn = async function () {
             bech32: 'xprv16zlhjxs29l9zk0aaf54ttn32nsrl9l855yqpsurnwjxfu2kd93dc4xx0pvxf0ffhzl9vc9vpcqsmmhhfu3c8nfusdj0yh8mg2kzgr797vxrtut4czgwjj4pdzfnstcwy6n0jfjw6tyeuqxdynl8msnu3cv8j5msy'
         }
     })
+    const userAddress = wallet.getChangeAddress()
 
     const storeScript: PlutusScript = {
         code: cbor.encode(Buffer.from(plutusV3.validators[2].compiledCode, 'hex')).toString('hex'),
@@ -42,7 +43,7 @@ const burn = async function () {
     )
     const { address: storeAddress } = serializePlutusScript(storeScript, undefined, 0, false)
     const storeUtxos = await provider.fetchAddressUTxOs(storeAddress)
-    console.log(storeUtxos[storeUtxos.length - 1])
+    console.log(storeAddress)
 
     const utxos = await wallet.getUtxos()
     const collateral = (await wallet.getCollateral())[0]!
@@ -55,7 +56,7 @@ const burn = async function () {
     })
 
     const mintScript = applyParamsToScript(plutusV3.validators[0].compiledCode, [])
-    const tokenName = 'ABCDE'
+    const tokenName = 'KH17112003'
     const tokenNameHex = stringToHex(tokenName)
 
     async function fetchUtxo(addr, txHash) {
@@ -65,21 +66,29 @@ const burn = async function () {
         })
     }
 
-    const txHashR = 'd543920e462c312e5a31767eef893e02c0d1aec03d658f90d4a0bc1017d51f35'
-
-    const userUtxo = await fetchUtxo(changeAddress, txHashR)
-    const storeUtxo = await fetchUtxo(storeAddress, txHashR)
+    const userUtxo = await fetchUtxo(changeAddress, '63c04dbcd662b3eb1b631fe3ff04375c6ebed4fc8aae5420b6f046790fa14f20')
+    const storeUtxo = await fetchUtxo(changeAddress, '14870e4a47e9e013fb1ef91e1811798fe1498a84664d2e10ecc1dfeacd02e4c8')
 
     console.log(userUtxo)
     console.log(storeUtxo)
 
     const unsignedTx = await txBuilder
-        .txIn(
-            userUtxo?.input.txHash!,
-            userUtxo?.input.outputIndex!,
-            userUtxo?.output.amount!,
-            userUtxo?.output.address!
-        )
+        // .spendingPlutusScriptV3()
+        // .txInScript(storeScriptHash)
+        // .txIn(
+        //     storeUtxo?.input.txHash!,
+        //     storeUtxo?.input.outputIndex!,
+        //     storeUtxo?.output.amount!,
+        //     storeUtxo?.output.address!
+        // )
+
+        // .txOut(userAddress, [
+        //     {
+        //         unit: '65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b04b483137313132303033',
+        //         quantity: '1'
+        //     }
+        // ])
+        // .txInRedeemerValue(mConStr1([]))
         .txIn(
             storeUtxo?.input.txHash!,
             storeUtxo?.input.outputIndex!,
@@ -90,10 +99,15 @@ const burn = async function () {
         .mint('-1', policyId, CIP68_100(tokenNameHex))
         .mintingScript(mintScript)
         .mintRedeemerValue(mConStr1([]))
+        .txIn(
+            userUtxo?.input.txHash!,
+            userUtxo?.input.outputIndex!,
+            userUtxo?.output.amount!,
+            userUtxo?.output.address!
+        )
         .mintPlutusScriptV3()
-        .mint('-1', policyId, CIP68_222(tokenName))
+        .mint('-1', policyId, CIP68_222(tokenNameHex))
         .mintingScript(mintScript)
-
         .mintRedeemerValue(mConStr1([]))
         .changeAddress(changeAddress)
         .selectUtxosFrom(utxos)

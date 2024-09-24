@@ -58,9 +58,9 @@ const update = async function () {
         })
     }
 
-    const storeUtxo = await fetchUtxo(storeAddress, '08b7507857059e503aeb74249c8474bc43f891ff0701373b1dfcb5b30b264b8c')
+    const storeUtxo = await fetchUtxo(storeAddress, 'c4634b7d65559cbc4ce40c5018e54c5258247f3e20eecacfc7abb024008fd4e8')
 
-    console.log(storeUtxo)
+    console.log(storeUtxo?.output.amount)
 
     const redeemer = {
         data: { alternative: 0, fields: [] }
@@ -74,13 +74,13 @@ const update = async function () {
     })
     tx.sendAssets(userAddress, [
         {
-            unit: 'd7b825c03d0243cd088670010a0033384529b1f0ebc13f9d50259f6d000de1404b483137313132303033',
+            unit: '65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de1404b483137313132303033',
             quantity: '1'
         }
     ])
     tx.sendAssets(referenceTokenRecipient, [
         {
-            unit: 'd7b825c03d0243cd088670010a0033384529b1f0ebc13f9d50259f6d000643b04b483137313132303033',
+            unit: '65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b04b483137313132303033',
             quantity: '1'
         }
     ])

@@ -46,7 +46,7 @@ const burn = async function () {
         data: { alternative: 0, fields: [] }
     }
 
-    const txHashR = '259d8e1cbef06596279f1d208abbdff4c70df259df4993992dfe41ccecbc4240'
+    const txHashR = '5d13ebcaa2635952c808f99c31f4b4b41e142286ee2e3ae53366485819977744'
     async function fetchUtxo(addr, txHash) {
         const utxos = await provider.fetchAddressUTxOs(addr)
         return utxos.find((utxo) => {
@@ -57,6 +57,7 @@ const burn = async function () {
     const storeUtxo = await fetchUtxo(storeAddress, txHashR)
     const userForgingScript = ForgeScript.withOneSignature(userAddress)
     const storeForginScript = ForgeScript.withOneSignature(storeAddress)
+    const collateral = await wallet.getCollateral()
 
     console.log(userUtxo?.output.amount)
     console.log(storeUtxo?.output.amount)
@@ -71,29 +72,24 @@ const burn = async function () {
         quantity: '1'
     }
 
+    console.log('burn')
     const tx = new Transaction({ initiator: wallet })
-    tx.redeemValue({
-        value: storeUtxo!,
-        script: storeScript
-    })
-    // tx.sendAssets(userAddress, [
-    //     {
-    //         unit: '65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b04b483137313132303033',
-    //         quantity: '1'
-    //     }
-    // ])
-    // tx.sendAssets(userAddress, [
-    //     {
-    //         unit: '65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000de1404b483137313132303033',
-    //         quantity: '1'
-    //     }
-    // ])
-    tx.setTxInputs([storeUtxo!, userUtxo!])
-    tx.burnAsset(storeForginScript, contributeAsset)
-    tx.burnAsset(userForgingScript, referenceAsset, redeemer)
+    // tx.redeemValue({
+    //     value: storeUtxo!,
+    //     script: storeScript,
+    //     redeemer: redeemer
+    // })
+
+    // tx.sendValue(userAddress, storeUtxo!)
+    tx.setTxInputs([userUtxo!, collateral[0]])
+    // tx.burnAsset(mintScript, contributeAsset, redeemer)
+    tx.burnAsset(mintScript, contributeAsset, redeemer)
+    tx.setCollateral(collateral)
 
     const unsignedTx = await tx.build()
+    console.log(unsignedTx)
     const signedTx = wallet.signTx(unsignedTx, true)
+    console.log(signedTx)
     const txHash = await wallet.submitTx(signedTx)
     console.log(txHash)
 }

@@ -24,11 +24,12 @@ validator store {
 
         check_output_utxo(validation_output)
       }
-      Remove ->  {
-        let validation_output = output_by_value(outputs, reference_nft)
-        check_output_utxo(validation_output)
-      }
+      Remove -> True
     }
+    // {
+    //   let validation_output = output_by_value(outputs, reference_nft)
+    //   check_output_utxo(validation_output)
+    // }
   }
 
   else(_) {

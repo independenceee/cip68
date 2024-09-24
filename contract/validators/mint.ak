@@ -8,17 +8,16 @@ use contract/types.{Burn, Mint, MintRedeemer}
 use contract/utils.{check_output_utxo}
 use types/cip68.{prefix_100, prefix_222}
 use validation/find.{output_by_addr_value}
-use validation/find
 use validation/payout.{at_least}
 
 validator mint {
   mint(redeemer: MintRedeemer, policy_id: PolicyId, transaction: Transaction) {
-    let Transaction { inputs, mint, outputs, .. } =
-      transaction
+    let Transaction { inputs, mint, outputs, .. } = transaction
 
     let mint_flatten = flatten(mint)
     when redeemer is {
       Mint -> True
+
       // {
       //   let first_input_txid = find.first_input_txid(inputs)
       //   let first_input_index = find.first_input_index(inputs)
@@ -39,7 +38,6 @@ validator mint {
       //   // let store_address = address.from_script(store)
       //   // let output_utxo =
       //     // output_by_addr_value(outputs, store_address, reference_value)
-
       //   and {
       //     first_input_index < 256,
       //     exact(mint_flatten, policy_id, reference_token_name, 1)?,
@@ -48,21 +46,20 @@ validator mint {
       //     // check_output_utxo(output_utxo)?,
       //   }
       // }
-
       Burn -> True
-      // and {
-      //     minting.by_prefix(mint_flatten, policy_id, prefix_100, -1)?,
-      //     minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)?,
-      //     when mint_flatten is {
-      //       [(_pid1, tkn1, _amt1), (_pid2, tkn2, _amt2)] ->
-      //         bytearray.compare(
-      //           bytearray.drop(tkn1, 4),
-      //           bytearray.drop(tkn2, 4),
-      //         ) == Equal
-      //       _ -> False
-      //     },
-      //   }
     }
+    // and {
+    //     minting.by_prefix(mint_flatten, policy_id, prefix_100, -1)?,
+    //     minting.by_prefix(mint_flatten, policy_id, prefix_222, -1)?,
+    //     when mint_flatten is {
+    //       [(_pid1, tkn1, _amt1), (_pid2, tkn2, _amt2)] ->
+    //         bytearray.compare(
+    //           bytearray.drop(tkn1, 4),
+    //           bytearray.drop(tkn2, 4),
+    //         ) == Equal
+    //       _ -> False
+    //     },
+    //   }
   }
 
   else(_) {
