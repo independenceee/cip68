@@ -73,22 +73,6 @@ const burn = async function () {
     console.log(storeUtxo)
 
     const unsignedTx = await txBuilder
-        // .spendingPlutusScriptV3()
-        // .txInScript(storeScriptHash)
-        // .txIn(
-        //     storeUtxo?.input.txHash!,
-        //     storeUtxo?.input.outputIndex!,
-        //     storeUtxo?.output.amount!,
-        //     storeUtxo?.output.address!
-        // )
-
-        // .txOut(userAddress, [
-        //     {
-        //         unit: '65ad4cd95f5357eaaa655f7edccf57067822e2ea33edaeef451cb457000643b04b483137313132303033',
-        //         quantity: '1'
-        //     }
-        // ])
-        // .txInRedeemerValue(mConStr1([]))
         .txIn(
             storeUtxo?.input.txHash!,
             storeUtxo?.input.outputIndex!,

@@ -1,1 +1,0 @@
-import {resolveScriptRef} from "@meshsdk/core"

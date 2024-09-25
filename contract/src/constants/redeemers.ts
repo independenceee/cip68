@@ -10,19 +10,22 @@ const redeemers = {
         data: {
             alternative: 1,
             fields: []
-        }
+        },
+        tag: 'BURN'
     },
     update: {
         data: {
             alternative: 0,
             feilds: []
-        }
+        },
+        tag: 'UPDATE'
     },
     remove: {
         data: {
             alternative: 1,
             feilds: []
-        }
+        },
+        tag: 'REMOVE'
     }
 } as const
 
